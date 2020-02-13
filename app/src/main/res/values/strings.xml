@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ClickCounter</string>
+    <string name="click_count_default">0</string>
+    <string name="increase_click_count">Увеличить счётчик на единицу</string>
+</resources>
