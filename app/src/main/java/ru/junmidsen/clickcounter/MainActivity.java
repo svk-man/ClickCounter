@@ -1,8 +1,12 @@
 package ru.junmidsen.clickcounter;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,5 +25,24 @@ public class MainActivity extends AppCompatActivity {
         int count = Integer.parseInt(textViewClickCount.getText().toString());
         count += 1;
         textViewClickCount.setText(Integer.toString(count));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_detail, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.click_count:
+                Intent intent = new Intent(this, DetailActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 }
