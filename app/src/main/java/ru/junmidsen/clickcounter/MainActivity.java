@@ -3,7 +3,9 @@ package ru.junmidsen.clickcounter;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -28,6 +30,10 @@ public class MainActivity extends AppCompatActivity {
     private AnimationDrawable mAnimationStars;
     private Animation mAnimationScale;
 
+    private SharedPreferences mSharedPreferences;
+    private static final String APP_PREFERENCES = "ClickCountSettings";
+    private static final String APP_PREFERENCES_CLICK_COUNT = "ClickCount";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,11 +53,18 @@ public class MainActivity extends AppCompatActivity {
                 OnClickIncreaseClickCount();
             }
         });
+
+        mSharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        getClickCount();
+        if (mClickCount != 0) {
+            mTextViewClickCount.setText(Integer.toString(mClickCount));
+        }
     }
 
     private void OnClickIncreaseClickCount() {
         mClickCount += 1;
         mTextViewClickCount.setText(Integer.toString(mClickCount));
+        saveClickCount();
 
         mFrameIncreaseClickCount.setBackgroundResource(R.drawable.stars);
         mAnimationStars = (AnimationDrawable) mFrameIncreaseClickCount.getBackground();
@@ -100,5 +113,17 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void getClickCount() {
+        if(mSharedPreferences.contains(APP_PREFERENCES_CLICK_COUNT)) {
+            mClickCount = mSharedPreferences.getInt(APP_PREFERENCES_CLICK_COUNT, 0);
+        }
+    }
+
+    private void saveClickCount() {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putInt(APP_PREFERENCES_CLICK_COUNT, mClickCount);
+        editor.apply();
     }
 }
