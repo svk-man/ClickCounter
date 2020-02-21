@@ -17,43 +17,70 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private int mClickCount = 0;
     private static final String CLICK_COUNT = "clickCount";
-    private TextView textViewClickCount;
+
+    private TextView mTextViewClickCount;
     private ImageButton mButtonIncreaseClickCount;
-    private FrameLayout mFrameLayoutImageButton;
-    private AnimationDrawable mAnimationSparkles;
+    private FrameLayout mFrameIncreaseClickCount;
+
+    private final static int ANIMATION_DELAY = 1000;
+    private AnimationDrawable mAnimationStars;
+    private Animation mAnimationScale;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textViewClickCount = findViewById(R.id.text_view_click_count);
+        mTextViewClickCount = (TextView) findViewById(R.id.text_click_count);
         mButtonIncreaseClickCount = (ImageButton) findViewById(R.id.button_increase_click_count);
-        mFrameLayoutImageButton = (FrameLayout) findViewById(R.id.frame_layout_image_button);
+        mFrameIncreaseClickCount = (FrameLayout) findViewById(R.id.frame_increase_click_count);
 
         mButtonIncreaseClickCount.setBackground(null);
+
+        mAnimationScale = AnimationUtils.loadAnimation(this, R.anim.scale);
+
+        mButtonIncreaseClickCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OnClickIncreaseClickCount();
+            }
+        });
     }
 
-    public void onclick_increase_click_count(View view) {
-        int count = Integer.parseInt(textViewClickCount.getText().toString());
-        count += 1;
+    private void OnClickIncreaseClickCount() {
+        mClickCount += 1;
+        mTextViewClickCount.setText(Integer.toString(mClickCount));
+
+        mFrameIncreaseClickCount.setBackgroundResource(R.drawable.stars);
+        mAnimationStars = (AnimationDrawable) mFrameIncreaseClickCount.getBackground();
         mButtonIncreaseClickCount.setEnabled(false);
-        textViewClickCount.setText(Integer.toString(count));
-        Animation animationScale = AnimationUtils.loadAnimation(this, R.anim.scale);
-        mButtonIncreaseClickCount.setAnimation(animationScale);
-        mButtonIncreaseClickCount.startAnimation(animationScale);
-        mFrameLayoutImageButton.setBackgroundResource(R.drawable.stars);
-        mAnimationSparkles = (AnimationDrawable) mFrameLayoutImageButton.getBackground();
-        mAnimationSparkles.start();
+        mAnimationStars.start();
+        mButtonIncreaseClickCount.setAnimation(mAnimationScale);
+        mButtonIncreaseClickCount.startAnimation(mAnimationScale);
         mButtonIncreaseClickCount.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mAnimationSparkles.stop();
-                mFrameLayoutImageButton.setBackground(null);
                 mButtonIncreaseClickCount.setEnabled(true);
+                mFrameIncreaseClickCount.setBackground(null);
+                mAnimationStars.stop();
             }
-        }, 1000);
+        }, ANIMATION_DELAY);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(CLICK_COUNT, Integer.toString(mClickCount));
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        String clickCountStr = savedInstanceState.getString(CLICK_COUNT);
+        mClickCount = Integer.parseInt(clickCountStr);
+        mTextViewClickCount.setText(clickCountStr);
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -67,24 +94,11 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.click_count:
                 Intent intent = new Intent(this, DetailActivity.class);
-                String countStr = textViewClickCount.getText().toString();
-                intent.putExtra("clickCount", countStr);
+                intent.putExtra(CLICK_COUNT, Integer.toString(mClickCount));
                 startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(CLICK_COUNT, textViewClickCount.getText().toString());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        textViewClickCount.setText(savedInstanceState.getString(CLICK_COUNT));
-        super.onRestoreInstanceState(savedInstanceState);
     }
 }
