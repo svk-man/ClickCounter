@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.click_count:
                 Intent intent = new Intent(this, DetailActivity.class);
+                String countStr = textViewClickCount.getText().toString();
+                intent.putExtra("clickCount", countStr);
                 startActivity(intent);
                 return true;
             default:
