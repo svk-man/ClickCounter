@@ -4,12 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -18,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String CLICK_COUNT = "clickCount";
     private TextView textViewClickCount;
     private ImageButton mButtonIncreaseClickCount;
+    private FrameLayout mFrameLayoutImageButton;
+    private AnimationDrawable mAnimationSparkles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,15 +30,30 @@ public class MainActivity extends AppCompatActivity {
 
         textViewClickCount = findViewById(R.id.text_view_click_count);
         mButtonIncreaseClickCount = (ImageButton) findViewById(R.id.button_increase_click_count);
+        mFrameLayoutImageButton = (FrameLayout) findViewById(R.id.frame_layout_image_button);
+
+        mButtonIncreaseClickCount.setBackground(null);
     }
 
     public void onclick_increase_click_count(View view) {
         int count = Integer.parseInt(textViewClickCount.getText().toString());
         count += 1;
+        mButtonIncreaseClickCount.setEnabled(false);
         textViewClickCount.setText(Integer.toString(count));
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.scale);
-        mButtonIncreaseClickCount.setAnimation(animation);
-        mButtonIncreaseClickCount.startAnimation(animation);
+        Animation animationScale = AnimationUtils.loadAnimation(this, R.anim.scale);
+        mButtonIncreaseClickCount.setAnimation(animationScale);
+        mButtonIncreaseClickCount.startAnimation(animationScale);
+        mFrameLayoutImageButton.setBackgroundResource(R.drawable.stars);
+        mAnimationSparkles = (AnimationDrawable) mFrameLayoutImageButton.getBackground();
+        mAnimationSparkles.start();
+        mButtonIncreaseClickCount.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mAnimationSparkles.stop();
+                mFrameLayoutImageButton.setBackground(null);
+                mButtonIncreaseClickCount.setEnabled(true);
+            }
+        }, 1000);
     }
 
     @Override

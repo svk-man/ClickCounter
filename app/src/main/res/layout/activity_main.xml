@@ -18,17 +18,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/button_increase_click_count"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+    <FrameLayout
+        android:id="@+id/frame_layout_image_button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:adjustViewBounds="false"
-        android:background="@android:color/background_light"
-        android:onClick="onclick_increase_click_count"
-        android:scaleType="centerInside"
-        android:src="@drawable/cookie"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_view_click_count" />
+        app:layout_constraintTop_toBottomOf="@+id/text_view_click_count">
+
+        <ImageButton
+            android:id="@+id/button_increase_click_count"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:adjustViewBounds="false"
+            android:onClick="onclick_increase_click_count"
+            android:scaleType="centerInside"
+            android:src="@drawable/cookie" />
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
