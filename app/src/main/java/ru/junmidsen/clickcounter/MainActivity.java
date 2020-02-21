@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -15,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String CLICK_COUNT = "clickCount";
     private TextView textViewClickCount;
+    private ImageButton mButtonIncreaseClickCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,12 +25,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textViewClickCount = findViewById(R.id.text_view_click_count);
+        mButtonIncreaseClickCount = (ImageButton) findViewById(R.id.button_increase_click_count);
     }
 
     public void onclick_increase_click_count(View view) {
         int count = Integer.parseInt(textViewClickCount.getText().toString());
         count += 1;
         textViewClickCount.setText(Integer.toString(count));
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.scale);
+        mButtonIncreaseClickCount.setAnimation(animation);
+        mButtonIncreaseClickCount.startAnimation(animation);
     }
 
     @Override
