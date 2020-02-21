@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String CLICK_COUNT = "clickCount";
     private TextView textViewClickCount;
 
     @Override
@@ -45,6 +47,17 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(CLICK_COUNT, textViewClickCount.getText().toString());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        textViewClickCount.setText(savedInstanceState.getString(CLICK_COUNT));
+        super.onRestoreInstanceState(savedInstanceState);
     }
 }
