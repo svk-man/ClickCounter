@@ -19,81 +19,80 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private int mClickCount = 0;
     private static final String CLICK_COUNT = "clickCount";
-
-    private TextView mTextViewClickCount;
-    private ImageButton mButtonIncreaseClickCount;
-    private FrameLayout mFrameIncreaseClickCount;
-
-    private final static int ANIMATION_DELAY = 1000;
-    private AnimationDrawable mAnimationStars;
-    private Animation mAnimationScale;
-
-    private SharedPreferences mSharedPreferences;
     private static final String APP_PREFERENCES = "ClickCountSettings";
     private static final String APP_PREFERENCES_CLICK_COUNT = "ClickCount";
+    private static final int ANIMATION_DELAY = 1000;
+
+    private int clickCount = 0;
+
+    private TextView clickCountTextView;
+    private ImageButton increaseClickCountButton;
+    private FrameLayout increaseClickCountFrame;
+
+    private AnimationDrawable animationStars;
+    private Animation animationScale;
+
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTextViewClickCount = (TextView) findViewById(R.id.text_click_count);
-        mButtonIncreaseClickCount = (ImageButton) findViewById(R.id.button_increase_click_count);
-        mFrameIncreaseClickCount = (FrameLayout) findViewById(R.id.frame_increase_click_count);
+        clickCountTextView = (TextView) findViewById(R.id.text_click_count);
+        increaseClickCountButton = (ImageButton) findViewById(R.id.button_increase_click_count);
+        increaseClickCountFrame = (FrameLayout) findViewById(R.id.frame_increase_click_count);
 
-        mButtonIncreaseClickCount.setBackground(null);
+        increaseClickCountButton.setBackground(null);
 
-        mAnimationScale = AnimationUtils.loadAnimation(this, R.anim.scale);
+        animationScale = AnimationUtils.loadAnimation(this, R.anim.scale);
 
-        mButtonIncreaseClickCount.setOnClickListener(new View.OnClickListener() {
+        increaseClickCountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 OnClickIncreaseClickCount();
             }
         });
 
-        mSharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         getClickCount();
-        if (mClickCount != 0) {
-            mTextViewClickCount.setText(String.valueOf(mClickCount));
+        if (clickCount != 0) {
+            clickCountTextView.setText(String.valueOf(clickCount));
         }
     }
 
     private void OnClickIncreaseClickCount() {
-        mClickCount ++;
-        mTextViewClickCount.setText(String.valueOf(mClickCount));
+        clickCount ++;
+        clickCountTextView.setText(String.valueOf(clickCount));
         saveClickCount();
 
-        mFrameIncreaseClickCount.setBackgroundResource(R.drawable.stars);
-        mAnimationStars = (AnimationDrawable) mFrameIncreaseClickCount.getBackground();
-        mButtonIncreaseClickCount.setEnabled(false);
-        mAnimationStars.start();
-        mButtonIncreaseClickCount.setAnimation(mAnimationScale);
-        mButtonIncreaseClickCount.startAnimation(mAnimationScale);
-        mButtonIncreaseClickCount.postDelayed(new Runnable() {
+        increaseClickCountFrame.setBackgroundResource(R.drawable.stars);
+        animationStars = (AnimationDrawable) increaseClickCountFrame.getBackground();
+        increaseClickCountButton.setEnabled(false);
+        animationStars.start();
+        increaseClickCountButton.setAnimation(animationScale);
+        increaseClickCountButton.startAnimation(animationScale);
+        increaseClickCountButton.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mButtonIncreaseClickCount.setEnabled(true);
-                mFrameIncreaseClickCount.setBackground(null);
-                mAnimationStars.stop();
+                increaseClickCountButton.setEnabled(true);
+                increaseClickCountFrame.setBackground(null);
+                animationStars.stop();
             }
         }, ANIMATION_DELAY);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(CLICK_COUNT, Integer.toString(mClickCount));
-        super.onSaveInstanceState(outState);
+    private void getClickCount() {
+        if(sharedPreferences.contains(APP_PREFERENCES_CLICK_COUNT)) {
+            clickCount = sharedPreferences.getInt(APP_PREFERENCES_CLICK_COUNT, 0);
+        }
     }
 
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        String clickCountStr = savedInstanceState.getString(CLICK_COUNT);
-        mClickCount = Integer.parseInt(clickCountStr);
-        mTextViewClickCount.setText(clickCountStr);
-        super.onRestoreInstanceState(savedInstanceState);
+    private void saveClickCount() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(APP_PREFERENCES_CLICK_COUNT, clickCount);
+        editor.apply();
     }
 
     @Override
@@ -106,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.click_count) {
             Intent intent = new Intent(this, DetailActivity.class);
-            intent.putExtra(CLICK_COUNT, Integer.toString(mClickCount));
+            intent.putExtra(CLICK_COUNT, Integer.toString(clickCount));
             startActivity(intent);
             return true;
         } else {
@@ -114,15 +113,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void getClickCount() {
-        if(mSharedPreferences.contains(APP_PREFERENCES_CLICK_COUNT)) {
-            mClickCount = mSharedPreferences.getInt(APP_PREFERENCES_CLICK_COUNT, 0);
-        }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(CLICK_COUNT, Integer.toString(clickCount));
+        super.onSaveInstanceState(outState);
     }
 
-    private void saveClickCount() {
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putInt(APP_PREFERENCES_CLICK_COUNT, mClickCount);
-        editor.apply();
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        clickCount = Integer.parseInt(savedInstanceState.getString(CLICK_COUNT));
+        clickCountTextView.setText(clickCount);
+        super.onRestoreInstanceState(savedInstanceState);
     }
 }
