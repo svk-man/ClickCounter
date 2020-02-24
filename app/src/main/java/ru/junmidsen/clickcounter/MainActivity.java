@@ -57,13 +57,13 @@ public class MainActivity extends AppCompatActivity {
         mSharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         getClickCount();
         if (mClickCount != 0) {
-            mTextViewClickCount.setText(Integer.toString(mClickCount));
+            mTextViewClickCount.setText(String.valueOf(mClickCount));
         }
     }
 
     private void OnClickIncreaseClickCount() {
-        mClickCount += 1;
-        mTextViewClickCount.setText(Integer.toString(mClickCount));
+        mClickCount ++;
+        mTextViewClickCount.setText(String.valueOf(mClickCount));
         saveClickCount();
 
         mFrameIncreaseClickCount.setBackgroundResource(R.drawable.stars);
@@ -104,14 +104,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.click_count:
-                Intent intent = new Intent(this, DetailActivity.class);
-                intent.putExtra(CLICK_COUNT, Integer.toString(mClickCount));
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.click_count) {
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.putExtra(CLICK_COUNT, Integer.toString(mClickCount));
+            startActivity(intent);
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
